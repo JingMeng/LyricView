@@ -7,12 +7,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Looper;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
+import android.text.BidiFormatter;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -233,7 +235,7 @@ public class LrcView extends View {
         String text = mLrcData.get(i).getText();
         BidiFormatter.Builder builder = new BidiFormatter.Builder();
         builder.stereoReset(true);
-        android.support.v4.text.BidiFormatter formatter = builder.build();
+       BidiFormatter formatter = builder.build();
         String formattedText = formatter.unicodeWrap(text);
 
         StaticLayout staticLayout = mLrcMap.get(formattedText);
