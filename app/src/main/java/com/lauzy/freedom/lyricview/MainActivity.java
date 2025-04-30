@@ -5,6 +5,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -34,20 +35,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void play() {
-        try {
-            AssetFileDescriptor descriptor = getAssets().openFd("Rolling In The Deep.mp3");
-            mMediaPlayer.setDataSource(descriptor.getFileDescriptor());
-            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+
+
+        if (false) {
+            // 1. 保证播放器回到 Idle
+            if (mMediaPlayer == null) {
+                mMediaPlayer = new MediaPlayer();
+            } else {
+                mMediaPlayer.reset();
+            }
+
+            mMediaPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                 @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mMediaPlayer.start();
-                    mSeekBar.setMax(mMediaPlayer.getDuration());
-                    mTvEnd.setText(LrcHelper.formatTime(mMediaPlayer.getDuration()));
+                public boolean onError(MediaPlayer mp, int what, int extra) {
+                    Log.e("PlayerError", "what=" + what + " extra=" + extra);
+                    return true; // 我们已处理，避免系统再走 onCompletion()
                 }
             });
+        }
+
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                Log.i("MainActivity123", "----------是否准备好了----" + Math.random());
+                mMediaPlayer.start();
+                mSeekBar.setMax(mMediaPlayer.getDuration());
+                mTvEnd.setText(LrcHelper.formatTime(mMediaPlayer.getDuration()));
+                mHandler.post(mRunnable);
+            }
+        });
+
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("Rolling In The Deep.mp3");
+
+            /**
+             * 主要是现在的这个api影响的是否播放
+             */
+            if (true) {
+                mMediaPlayer.setDataSource(
+                        afd.getFileDescriptor(),
+                        afd.getStartOffset(),
+                        afd.getLength()
+                );
+            } else {
+                mMediaPlayer.setDataSource(
+                        afd.getFileDescriptor()
+                );
+            }
+            afd.close();
+
             mMediaPlayer.prepareAsync();
-            mHandler.post(mRunnable);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -103,8 +141,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_play:
-                mMediaPlayer.start();
-                mLrcView.resume();
+                Log.i("MainActivity123", "----------是否正在播放----" + mMediaPlayer.isPlaying());
+                if (!mMediaPlayer.isPlaying()) {
+                    mMediaPlayer.start();
+                    mLrcView.resume();
+                }
                 break;
             case R.id.btn_pause:
                 mMediaPlayer.pause();
