@@ -3,19 +3,11 @@
 buildscript {
     
     repositories {
-        maven { url "https://maven.aliyun.com/repository/google"}
-        maven { url "https://maven.aliyun.com/repository/central"}
-        maven { url "https://maven.aliyun.com/repository/jcenter"}
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin"}
-        maven { url 'http://developer.huawei.com/repo/'}
-        maven { url "https://bintray.com/wechat-sdk-team/maven"}
-        maven { url "https://maven.aliyun.com/nexus/content/groups/public/"}
-
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:8.2.1'
         
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -25,16 +17,8 @@ buildscript {
 
 allprojects {
     repositories {
-        maven { url "https://maven.aliyun.com/repository/google"}
-        maven { url "https://maven.aliyun.com/repository/central"}
-        maven { url "https://maven.aliyun.com/repository/jcenter"}
-        maven { url "https://maven.aliyun.com/repository/gradle-plugin"}
-        maven { url 'http://developer.huawei.com/repo/'}
-        maven { url "https://bintray.com/wechat-sdk-team/maven"}
-        maven { url "https://maven.aliyun.com/nexus/content/groups/public/"}
-
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 
